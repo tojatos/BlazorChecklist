@@ -22,7 +22,6 @@ namespace BlazorChecklist.Server.Controllers
         /// Returns list of checklists' names.
         /// </summary>
         /// <response code="200">New checklist inserted.</response>
-        [Route("lists")]
         [HttpGet]
         [ProducesResponseType(200)]
         public List<string> GetListNames() => _context.Checklists.Select(c => c.Name).ToList();
@@ -32,7 +31,6 @@ namespace BlazorChecklist.Server.Controllers
         /// </summary>
         /// <response code="201">New checklist inserted.</response>
         /// <response code="409">Checklist of given name already exists.</response>
-        [Route("lists")]
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(409)]
@@ -55,8 +53,7 @@ namespace BlazorChecklist.Server.Controllers
         /// </summary>
         /// <response code="200">OK.</response>
         /// <response code="404">Checklist of given ID does not exist.</response>
-//        [Route("lists/{name}")]
-        [HttpDelete("lists/{name}")]
+        [HttpDelete("{name}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public IActionResult DeleteChecklist(string name)
@@ -74,7 +71,7 @@ namespace BlazorChecklist.Server.Controllers
         /// Returns list of checklist items.
         /// </summary>
         /// <response code="200">JSON array of checklist's items.</response>
-        [HttpGet("lists/{name}/items")]
+        [HttpGet("{name}/items")]
         [ProducesResponseType(200)]
         public List<CItem> GetChecklistItems(string name) => _context.Items.ToList().Where(i => i.ChecklistName == name)
             .Select(i => new CItem{Name = i.Name, Checked = i.Checked}).ToList();
@@ -89,7 +86,7 @@ namespace BlazorChecklist.Server.Controllers
         /// Inserts new unchecked item to checklist and gives it unique ID.
         /// </summary>
         /// <response code="201">Returns ID of newly added item.</response>
-        [HttpPost("lists/{name}/items")]
+        [HttpPost("{name}/items")]
         [ProducesResponseType(201)]
         public IActionResult CreateChecklistItem([FromBody] string itemName, string name)
         {
@@ -112,7 +109,7 @@ namespace BlazorChecklist.Server.Controllers
         /// </summary>
         /// <response code="202">OK.</response>
         /// <response code="404">Item of given ID does not exist.</response>
-        [HttpPatch("lists/{name}/items/{id}")]
+        [HttpPatch("{name}/items/{id}")]
         [ProducesResponseType(202)]
         [ProducesResponseType(404)]
         public IActionResult SetItemCheck([FromBody] bool Checked, int id, string name)
@@ -130,7 +127,7 @@ namespace BlazorChecklist.Server.Controllers
         /// </summary>
         /// <response code="200">OK.</response>
         /// <response code="404">Item of given ID does not exist in checklist.</response>
-        [HttpDelete("lists/{name}/items/{id}")]
+        [HttpDelete("{name}/items/{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public IActionResult DeleteItem(int id, string name)

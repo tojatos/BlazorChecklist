@@ -1,0 +1,64 @@
+﻿@page "/checklist"
+@inject HttpClient client
+@inject IJSRuntime js
+
+<h3>Checklists</h3>
+
+<div class="form-group">
+    <a class="btn btn-success" href="checklist/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+
+@if (checklists == null)
+{
+    <text>Loading...</text>
+}
+else if (checklists.Length == 0)
+{
+    <text>No checklists Found.</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Experience (Years)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Checklist clist in checklists)
+            {
+                <tr>
+                    <td>@clist.Id</td>
+                    <td>@clist.Name</td>
+                    <td>
+                        <a class="btn btn-success" href="developer/edit/@clist.Id">Edit</a>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(clist.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Checklist[] checklists { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        checklists = await client.GetFromJsonAsync<Checklist[]>("api/checklist");
+    }
+    async Task Delete(long checklistId)
+    {
+        var clist = checklists.First(x => x.Id == checklistId);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {clist.Name}?"))
+        {
+            await client.DeleteAsync($"api/checklist/{checklistId}");
+            await OnInitializedAsync();
+        }
+    }
+
+}
