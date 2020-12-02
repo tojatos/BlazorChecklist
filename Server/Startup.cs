@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
 
 namespace BlazorChecklist.Server
 {
@@ -25,6 +23,7 @@ namespace BlazorChecklist.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddDbContextFactory<ChecklistContext>(opt => opt.UseSqlite($"Data source={nameof(ChecklistContext)}.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlazorChecklist.Shared;
+using Microsoft.EntityFrameworkCore;
 
-namespace BlazorChecklist.Shared
+namespace BlazorChecklist.Server
 {
     public class ChecklistContext : DbContext
     {
