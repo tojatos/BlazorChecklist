@@ -25,6 +25,10 @@
     <ProjectReference Include="..\Client\BlazorChecklist.Client.csproj" />
     <ProjectReference Include="..\Shared\BlazorChecklist.Shared.csproj" />
   </ItemGroup>
-
+    
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
 
 </Project>
