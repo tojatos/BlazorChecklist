@@ -28,10 +28,10 @@ else
         <tbody>
             @foreach (string checklistName in ChecklistNames)
             {
-                <tr @onclick="@(() => NavigationManager.NavigateTo($"checklist/items/{checklistName}"))">
+                <tr>
                     <td>@checklistName</td>
                     <td>
-                        @* <a class="btn btn-success" href="developer/edit/@checklistName">Edit</a> *@
+                        <a class="btn btn-success" href="checklist/items/{checklistName}">Inspect</a>
                         <button class="btn btn-danger" @onclick="@(() => Delete(checklistName))">Delete</button>
                     </td>
                 </tr>

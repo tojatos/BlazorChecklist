@@ -19,14 +19,20 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Name</th>
+                <th>Checked</th>
             </tr>
         </thead>
         <tbody>
             @foreach (Item item in Items)
             {
                 <tr>
+                    <td>@item.Id</td>
                     <td>@item.Name</td>
+                    <td>@item.Checked</td>
+                    <button class="btn btn-success" @onclick="@(() => Check(item.Id))">Check</button>
+                    <button class="btn btn-danger" @onclick="@(() => Delete(item.Id))">Delete</button>
                 </tr>
             }
         </tbody>
@@ -47,12 +53,19 @@ else
     {
         Items = await HttpClient.GetFromJsonAsync<Item[]>($"api/checklist/{ChecklistName}/items");
     }
-    // async Task Delete(string checklistName)
-    // {
-    //     if (await Js.InvokeAsync<bool>("confirm", $"Do you want to delete {checklistName}?"))
-    //     {
-    //         await Client.DeleteAsync($"api/checklist/{checklistName}");
-    //         await OnInitializedAsync();
-    //     }
-    // }
+    
+    async Task Check(long itemId)
+    {
+        bool check = !Items.First(i => i.Id == itemId).Checked;
+        await HttpClient.PatchAsync($"api/checklist/{ChecklistName}/items/{itemId}", JsonContent.Create(check));
+        await OnInitializedAsync();
+    }
+    async Task Delete(long itemId)
+    {
+        if (await Js.InvokeAsync<bool>("confirm", $"Do you want to delete item {itemId}?"))
+        {
+            await HttpClient.DeleteAsync($"api/checklist/{ChecklistName}/items/{itemId}");
+            await OnInitializedAsync();
+        }
+    }
 }
