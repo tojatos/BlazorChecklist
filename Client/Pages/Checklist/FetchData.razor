@@ -1,6 +1,7 @@
 ﻿@page "/checklist"
-@inject HttpClient client
-@inject IJSRuntime js
+@inject HttpClient Client
+@inject NavigationManager NavigationManager
+@inject IJSRuntime Js
 
 <h3>Checklists</h3>
 
@@ -8,11 +9,11 @@
     <a class="btn btn-success" href="checklist/create"><i class="oi oi-plus"></i> Create New</a>
 </div>
 
-@if (checklistNames == null)
+@if (ChecklistNames == null)
 {
     <text>Loading...</text>
 }
-else if (checklistNames.Length == 0)
+else if (ChecklistNames.Length == 0)
 {
     <text>No checklists Found.</text>
 }
@@ -25,13 +26,13 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (string clistName in checklistNames)
+            @foreach (string checklistName in ChecklistNames)
             {
-                <tr>
-                    <td>@clistName</td>
+                <tr @onclick="@(() => NavigationManager.NavigateTo($"checklist/items/{checklistName}"))">
+                    <td>@checklistName</td>
                     <td>
-                        <a class="btn btn-success" href="developer/edit/@clistName">Edit</a>
-                        <button class="btn btn-danger" @onclick="@(() => Delete(clistName))">Delete</button>
+                        @* <a class="btn btn-success" href="developer/edit/@checklistName">Edit</a> *@
+                        <button class="btn btn-danger" @onclick="@(() => Delete(checklistName))">Delete</button>
                     </td>
                 </tr>
             }
@@ -40,16 +41,16 @@ else
 }
 
 @code {
-    string[] checklistNames { get; set; }
+    string[] ChecklistNames { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        checklistNames = await client.GetFromJsonAsync<string[]>("api/checklist");
+        ChecklistNames = await Client.GetFromJsonAsync<string[]>("api/checklist");
     }
     async Task Delete(string checklistName)
     {
-        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {checklistName}?"))
+        if (await Js.InvokeAsync<bool>("confirm", $"Do you want to delete {checklistName}?"))
         {
-            await client.DeleteAsync($"api/checklist/{checklistName}");
+            await Client.DeleteAsync($"api/checklist/{checklistName}");
             await OnInitializedAsync();
         }
     }

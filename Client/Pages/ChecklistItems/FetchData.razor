@@ -1,0 +1,58 @@
+﻿@page "/checklist/items/{ChecklistName}"
+@inject HttpClient HttpClient
+@inject IJSRuntime Js
+
+<h3>Items</h3>
+
+<Form ButtonText="Add Item" Item="@_itemToAdd" OnValidSubmit="@CreateItem"></Form>
+
+@if (Items == null)
+{
+    <text>Loading...</text>
+}
+else if (Items.Length == 0)
+{
+    <text>No items Found.</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Item item in Items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public string ChecklistName { get; set; }
+    readonly Item _itemToAdd = new Item();
+    async Task CreateItem()
+    {
+        await HttpClient.PostAsJsonAsync($"api/checklist/{ChecklistName}/items", _itemToAdd.Name);
+        await OnInitializedAsync();
+    }
+
+    Item[] Items { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Items = await HttpClient.GetFromJsonAsync<Item[]>($"api/checklist/{ChecklistName}/items");
+    }
+    // async Task Delete(string checklistName)
+    // {
+    //     if (await Js.InvokeAsync<bool>("confirm", $"Do you want to delete {checklistName}?"))
+    //     {
+    //         await Client.DeleteAsync($"api/checklist/{checklistName}");
+    //         await OnInitializedAsync();
+    //     }
+    // }
+}

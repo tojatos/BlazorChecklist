@@ -1,7 +1,7 @@
 ﻿using BlazorChecklist.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorChecklist.Server
+namespace BlazorChecklist.Server.Data
 {
     public class ChecklistContext : DbContext
     {

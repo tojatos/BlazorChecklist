@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using BlazorChecklist.Server.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -74,14 +75,16 @@ namespace BlazorChecklist.Server.Controllers
         /// <response code="200">JSON array of checklist's items.</response>
         [HttpGet("{name}/items")]
         [ProducesResponseType(200)]
-        public List<CItem> GetChecklistItems(string name) => _context.Items.ToList().Where(i => i.ChecklistName == name)
-            .Select(i => new CItem{Name = i.Name, Checked = i.Checked}).ToList();
+        public Item[] GetChecklistItems(string name) =>
+            _context.Items.Where(i => i.ChecklistName == name).ToArray();
+            // _context.Items.ToList().Where(i => i.ChecklistName == name)
+            // .Select(i => new CItem{Name = i.Name, Checked = i.Checked}).ToList();
 
-        public struct CItem
-        {
-            public string Name;
-            public bool Checked;
-        }
+        // public struct CItem
+        // {
+        //     public string Name;
+        //     public bool Checked;
+        // }
 
         /// <summary>
         /// Inserts new unchecked item to checklist and gives it unique ID.
@@ -112,11 +115,11 @@ namespace BlazorChecklist.Server.Controllers
         [HttpPatch("{name}/items/{id}")]
         [ProducesResponseType(202)]
         [ProducesResponseType(404)]
-        public IActionResult SetItemCheck([FromBody] bool Checked, int id, string name)
+        public IActionResult SetItemCheck([FromBody] bool @checked, int id, string name)
         {
             if (!_context.Items.Any(i => i.Id == id && i.ChecklistName == name)) return NotFound();
 
-            _context.Items.First(i => i.Id == id && i.ChecklistName == name).Checked = Checked;
+            _context.Items.First(i => i.Id == id && i.ChecklistName == name).Checked = @checked;
             _context.SaveChanges();
 
             return StatusCode(202);

@@ -1,10 +1,10 @@
-﻿<EditForm Model="@Checklist" OnValidSubmit="@OnValidSubmit">
+﻿<EditForm Model="@Item" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
     <div class="form-group">
         <label>Name:</label>
         <div>
-            <InputText @bind-Value="@Checklist.Name" />
-            <ValidationMessage For="@(() => Checklist.Name)" />
+            <InputText @bind-Value="@Item.Name" />
+            <ValidationMessage For="@(() => Item.Name)" />
         </div>
     </div>
     <button type="submit" class="btn btn-success">
@@ -12,7 +12,8 @@
     </button>
 </EditForm>
 @code {
-    [Parameter] public Checklist Checklist { get; set; }
+    [Parameter] public Item Item { get; set; }
+    [Parameter] public string ChecklistName { get; set; }
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 }
