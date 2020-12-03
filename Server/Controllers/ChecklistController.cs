@@ -30,17 +30,18 @@ namespace BlazorChecklist.Server.Controllers
         /// Inserts new checklist with a unique name.
         /// </summary>
         /// <response code="201">New checklist inserted.</response>
+        /// <response code="400">Checklist name is invalid</response>
         /// <response code="409">Checklist of given name already exists.</response>
         [HttpPost]
         [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(409)]
         public IActionResult CreateChecklist([FromBody] string checklistName)
         {
+            if (string.IsNullOrWhiteSpace(checklistName)) return StatusCode(400);
             if(_context.Checklists.Any(c => c.Name == checklistName)) return StatusCode(409);
-            long newId = !_context.Checklists.Any() ? 1 : _context.Checklists.Last().Id + 1;
             _context.Checklists.Add(new Checklist
             {
-                Id = newId,
                 Name = checklistName,
             });
             _context.SaveChanges();
@@ -90,17 +91,16 @@ namespace BlazorChecklist.Server.Controllers
         [ProducesResponseType(201)]
         public IActionResult CreateChecklistItem([FromBody] string itemName, string name)
         {
-            long newId = !_context.Items.Any() ? 1 : _context.Items.Last().Id + 1;
-            _context.Items.Add(new Item
+            var item = new Item
             {
-                Id = newId,
                 ChecklistName = name,
                 Name = itemName,
                 Checked = false,
-            });
+            };
+            _context.Items.Add(item);
             _context.SaveChanges();
 
-            return StatusCode(201, newId);
+            return StatusCode(201, item.Id);
 
         }
 
@@ -139,5 +139,6 @@ namespace BlazorChecklist.Server.Controllers
             _context.SaveChanges();
 
             return StatusCode(202);
-        }    }
+        }
+    }
 }

@@ -1,0 +1,14 @@
+﻿@page "/checklist/create"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+<h3>Create</h3>
+<Form ButtonText="Create Checklist" clist="@clist"
+            OnValidSubmit="@CreateChecklist" />
+@code {
+    Checklist clist = new Checklist();
+    async Task CreateChecklist()
+    {
+        await http.PostAsJsonAsync("api/checklist", clist.Name);
+        uriHelper.NavigateTo("checklist");
+    }
+}

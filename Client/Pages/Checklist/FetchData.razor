@@ -8,11 +8,11 @@
     <a class="btn btn-success" href="checklist/create"><i class="oi oi-plus"></i> Create New</a>
 </div>
 
-@if (checklists == null)
+@if (checklistNames == null)
 {
     <text>Loading...</text>
 }
-else if (checklists.Length == 0)
+else if (checklistNames.Length == 0)
 {
     <text>No checklists Found.</text>
 }
@@ -21,23 +21,17 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Experience (Years)</th>
-                <th></th>
+                <th>Name</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (Checklist clist in checklists)
+            @foreach (string clistName in checklistNames)
             {
                 <tr>
-                    <td>@clist.Id</td>
-                    <td>@clist.Name</td>
+                    <td>@clistName</td>
                     <td>
-                        <a class="btn btn-success" href="developer/edit/@clist.Id">Edit</a>
-                        <button class="btn btn-danger" @onclick="@(() => Delete(clist.Id))">Delete</button>
+                        <a class="btn btn-success" href="developer/edit/@clistName">Edit</a>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(clistName))">Delete</button>
                     </td>
                 </tr>
             }
@@ -46,17 +40,16 @@ else
 }
 
 @code {
-    Checklist[] checklists { get; set; }
+    string[] checklistNames { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        checklists = await client.GetFromJsonAsync<Checklist[]>("api/checklist");
+        checklistNames = await client.GetFromJsonAsync<string[]>("api/checklist");
     }
-    async Task Delete(long checklistId)
+    async Task Delete(string checklistName)
     {
-        var clist = checklists.First(x => x.Id == checklistId);
-        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {clist.Name}?"))
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {checklistName}?"))
         {
-            await client.DeleteAsync($"api/checklist/{checklistId}");
+            await client.DeleteAsync($"api/checklist/{checklistName}");
             await OnInitializedAsync();
         }
     }
