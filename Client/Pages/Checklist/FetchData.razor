@@ -31,7 +31,7 @@ else
                 <tr>
                     <td>@checklistName</td>
                     <td>
-                        <a class="btn btn-success" href="checklist/items/{checklistName}">Inspect</a>
+                        <a class="btn btn-success" href="@($"checklist/items/{checklistName}")">Inspect</a>
                         <button class="btn btn-danger" @onclick="@(() => Delete(checklistName))">Delete</button>
                     </td>
                 </tr>
